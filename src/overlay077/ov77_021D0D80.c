@@ -240,8 +240,6 @@ static int ov77_021D0E3C(OverlayManager *param0, int *param1)
             ov77_021D20E4(&v0->unk_238, v0->unk_04, v0->heapID);
         }
 
-        v0->unk_4F8++;
-
         if (((gSystem.pressedKeys & PAD_BUTTON_A) == PAD_BUTTON_A) || ((gSystem.pressedKeys & PAD_BUTTON_START) == PAD_BUTTON_START)) {
             v0->unk_4E8 = 1;
             sub_0200564C(0, 60);
@@ -258,7 +256,7 @@ static int ov77_021D0E3C(OverlayManager *param0, int *param1)
             break;
         }
 
-        if (v0->unk_4F8 > 30 * 30) {
+        if ((gSystem.pressedKeys & PAD_BUTTON_B) == PAD_BUTTON_B) {
             v0->unk_4E8 = 3;
             gSystem.unk_6C = 1;
             {
