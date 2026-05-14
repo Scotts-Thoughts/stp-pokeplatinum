@@ -5,6 +5,7 @@
 
     ScriptEntry _000A
     ScriptEntry _00D1
+    ScriptEntry _OnMapLoad
     ScriptEntryEnd
 
 _000A:
@@ -13,6 +14,11 @@ _000A:
     FacePlayer
     GoToIfSet 0xAB4, _00BC
     Message 0
+    GetStpGreatMarshShard 0x8008
+    GoToIfEq 0x8008, 1, _005B
+    GoToIfEq 0x8008, 2, _0069
+    GoToIfEq 0x8008, 3, _0077
+    GoToIfEq 0x8008, 4, _0085
     GetRandom 0x8004, 4
     SetVar 0x8008, 0x8004
     GoToIfEq 0x8008, 0, _005B
@@ -66,4 +72,9 @@ _00C7:
 
 _00D1:
     ShowLandmarkSign 2
+    End
+
+_OnMapLoad:
+    ClearFlag 0xAB4
+    ScrCmd_20E
     End

@@ -44,6 +44,9 @@ in which the player moves.
 - [file_format_specifications.md](file_format_specifications.md): a more technical
   description of the different files and their data structures that are used to
   store map data
+- [trainer_sight_range.md](trainer_sight_range.md): how a field trainer's
+  line-of-sight range is stored on the map's object event, and how to find or
+  edit it
 
 ## Credits
 

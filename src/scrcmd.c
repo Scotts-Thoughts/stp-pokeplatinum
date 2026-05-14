@@ -423,6 +423,7 @@ static BOOL ScrCmd_SetPlayerState(ScriptContext *ctx);
 static BOOL ScrCmd_ChangePlayerState(ScriptContext *ctx);
 static BOOL ScrCmd_GetPlayerStarterSpecies(ScriptContext *ctx);
 static BOOL ScrCmd_GetStpStarterSpecies(ScriptContext *ctx);
+static BOOL ScrCmd_GetStpGreatMarshShard(ScriptContext *ctx);
 static BOOL ScrCmd_GetSwarmMapAndSpecies(ScriptContext *ctx);
 static BOOL ScrCmd_0E6(ScriptContext *ctx);
 static BOOL ScrCmd_0F2(ScriptContext *ctx);
@@ -1608,6 +1609,7 @@ const ScrCmdFunc Unk_020EAC58[] = {
     ScrCmd_346,
     ScrCmd_347,
     ScrCmd_GetStpStarterSpecies,
+    ScrCmd_GetStpGreatMarshShard,
 };
 
 const u32 Unk_020EAB80 = NELEMS(Unk_020EAC58);
@@ -4779,9 +4781,18 @@ static BOOL ScrCmd_GetStpStarterSpecies(ScriptContext *ctx)
 {
     u16 *species = ScriptContext_GetVarPointer(ctx);
 
-    *species = stpStarterSpecies == SPECIES_NONE ? 
+    *species = stpStarterSpecies == SPECIES_NONE ?
         SystemVars_GetPlayerStarter(SaveData_GetVarsFlags(ctx->fieldSystem->saveData)) :
         stpStarterSpecies;
+
+    return FALSE;
+}
+
+static BOOL ScrCmd_GetStpGreatMarshShard(ScriptContext *ctx)
+{
+    u16 *value = ScriptContext_GetVarPointer(ctx);
+
+    *value = stpGreatMarshShard;
 
     return FALSE;
 }

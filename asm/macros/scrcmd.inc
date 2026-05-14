@@ -1289,6 +1289,11 @@
     .short \destVar
     .endm
 
+    .macro GetStpGreatMarshShard destVar
+    .short 841
+    .short \destVar
+    .endm
+
     .macro BufferUndergroundGoodsName templateArg, goods
     .short 223
     .byte \templateArg
