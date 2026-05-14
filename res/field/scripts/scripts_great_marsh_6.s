@@ -5,7 +5,6 @@
 
     ScriptEntry _000A
     ScriptEntry _00D1
-    ScriptEntry _OnMapLoad
     ScriptEntryEnd
 
 _000A:
@@ -72,9 +71,4 @@ _00C7:
 
 _00D1:
     ShowLandmarkSign 2
-    End
-
-_OnMapLoad:
-    ClearFlag 0xAB4
-    ScrCmd_20E
     End

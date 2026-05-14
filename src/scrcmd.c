@@ -424,6 +424,9 @@ static BOOL ScrCmd_ChangePlayerState(ScriptContext *ctx);
 static BOOL ScrCmd_GetPlayerStarterSpecies(ScriptContext *ctx);
 static BOOL ScrCmd_GetStpStarterSpecies(ScriptContext *ctx);
 static BOOL ScrCmd_GetStpGreatMarshShard(ScriptContext *ctx);
+static BOOL ScrCmd_GetStpFloaromaBerry(ScriptContext *ctx);
+static BOOL ScrCmd_GetStpBerryMaster(ScriptContext *ctx);
+static BOOL ScrCmd_GetStpPastoriaBerry(ScriptContext *ctx);
 static BOOL ScrCmd_GetSwarmMapAndSpecies(ScriptContext *ctx);
 static BOOL ScrCmd_0E6(ScriptContext *ctx);
 static BOOL ScrCmd_0F2(ScriptContext *ctx);
@@ -1610,6 +1613,9 @@ const ScrCmdFunc Unk_020EAC58[] = {
     ScrCmd_347,
     ScrCmd_GetStpStarterSpecies,
     ScrCmd_GetStpGreatMarshShard,
+    ScrCmd_GetStpFloaromaBerry,
+    ScrCmd_GetStpBerryMaster,
+    ScrCmd_GetStpPastoriaBerry,
 };
 
 const u32 Unk_020EAB80 = NELEMS(Unk_020EAC58);
@@ -4793,6 +4799,33 @@ static BOOL ScrCmd_GetStpGreatMarshShard(ScriptContext *ctx)
     u16 *value = ScriptContext_GetVarPointer(ctx);
 
     *value = stpGreatMarshShard;
+
+    return FALSE;
+}
+
+static BOOL ScrCmd_GetStpFloaromaBerry(ScriptContext *ctx)
+{
+    u16 *value = ScriptContext_GetVarPointer(ctx);
+
+    *value = stpFloaromaBerry;
+
+    return FALSE;
+}
+
+static BOOL ScrCmd_GetStpBerryMaster(ScriptContext *ctx)
+{
+    u16 *value = ScriptContext_GetVarPointer(ctx);
+
+    *value = stpBerryMaster;
+
+    return FALSE;
+}
+
+static BOOL ScrCmd_GetStpPastoriaBerry(ScriptContext *ctx)
+{
+    u16 *value = ScriptContext_GetVarPointer(ctx);
+
+    *value = stpPastoriaBerry;
 
     return FALSE;
 }

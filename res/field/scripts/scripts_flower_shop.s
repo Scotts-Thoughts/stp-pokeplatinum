@@ -6,6 +6,7 @@
     ScriptEntry _000E
     ScriptEntry _006E
     ScriptEntry _00A9
+    ScriptEntry _ClearBerryFlag
     ScriptEntryEnd
 
 _000E:
@@ -14,8 +15,36 @@ _000E:
     FacePlayer
     GoToIfSet 0xAAA, _0059
     Message 0
+    GetStpFloaromaBerry 0x8008
+    GoToIfEq 0x8008, 1, _BerryCheri
+    GoToIfEq 0x8008, 2, _BerryChesto
+    GoToIfEq 0x8008, 3, _BerryPecha
+    GoToIfEq 0x8008, 4, _BerryRawst
+    GoToIfEq 0x8008, 5, _BerryAspear
     GetRandom 0x8004, 5
     AddVar 0x8004, 149
+    GoTo _GiveBerry
+
+_BerryCheri:
+    SetVar 0x8004, 149
+    GoTo _GiveBerry
+
+_BerryChesto:
+    SetVar 0x8004, 150
+    GoTo _GiveBerry
+
+_BerryPecha:
+    SetVar 0x8004, 151
+    GoTo _GiveBerry
+
+_BerryRawst:
+    SetVar 0x8004, 152
+    GoTo _GiveBerry
+
+_BerryAspear:
+    SetVar 0x8004, 153
+
+_GiveBerry:
     SetVar 0x8005, 1
     ScrCmd_07D 0x8004, 0x8005, 0x800C
     GoToIfEq 0x800C, 0, _0064
@@ -65,6 +94,10 @@ _00A9:
     FacePlayer
     ShowAccessoryShop
     ReleaseAll
+    End
+
+_ClearBerryFlag:
+    ClearFlag 0xAAA
     End
 
     .byte 0

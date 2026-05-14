@@ -1294,6 +1294,21 @@
     .short \destVar
     .endm
 
+    .macro GetStpFloaromaBerry destVar
+    .short 842
+    .short \destVar
+    .endm
+
+    .macro GetStpBerryMaster destVar
+    .short 843
+    .short \destVar
+    .endm
+
+    .macro GetStpPastoriaBerry destVar
+    .short 844
+    .short \destVar
+    .endm
+
     .macro BufferUndergroundGoodsName templateArg, goods
     .short 223
     .byte \templateArg

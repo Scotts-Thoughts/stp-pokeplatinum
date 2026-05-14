@@ -5,6 +5,7 @@
 
     ScriptEntry _000A
     ScriptEntry _006A
+    ScriptEntry _ClearBerryFlag
     ScriptEntryEnd
 
 _000A:
@@ -13,8 +14,17 @@ _000A:
     FacePlayer
     GoToIfSet 0xAA3, _0055
     Message 0
+    GetStpPastoriaBerry 0x8008
+    GoToIfEq 0x8008, 0, _PastoriaRandom
+    SetVar 0x8004, 0x8008
+    AddVar 0x8004, 183
+    GoTo _PastoriaGive
+
+_PastoriaRandom:
     GetRandom 0x8004, 17
     AddVar 0x8004, 184
+
+_PastoriaGive:
     SetVar 0x8005, 1
     ScrCmd_07D 0x8004, 0x8005, 0x800C
     GoToIfEq 0x800C, 0, _0060
@@ -45,6 +55,10 @@ _006A:
     WaitABXPadPress
     CloseMessage
     ReleaseAll
+    End
+
+_ClearBerryFlag:
+    ClearFlag 0xAA3
     End
 
     .byte 0

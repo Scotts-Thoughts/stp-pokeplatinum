@@ -12,6 +12,7 @@
 
 _0016:
     SetFlag 0x9E7
+    ClearFlag 0xAA0
     End
 
 _001C:
@@ -20,8 +21,17 @@ _001C:
     FacePlayer
     GoToIfSet 0xAA0, _0067
     Message 0
+    GetStpBerryMaster 0x8008
+    GoToIfEq 0x8008, 0, _BerryMasterRandom
+    SetVar 0x8004, 0x8008
+    AddVar 0x8004, 148
+    GoTo _BerryMasterGive
+
+_BerryMasterRandom:
     GetRandom 0x8004, 26
     AddVar 0x8004, 149
+
+_BerryMasterGive:
     SetVar 0x8005, 1
     ScrCmd_07D 0x8004, 0x8005, 0x800C
     GoToIfEq 0x800C, 0, _0072
