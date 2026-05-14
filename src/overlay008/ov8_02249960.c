@@ -3736,21 +3736,14 @@ void ov8_0224C198(FieldSystem *fieldSystem)
             v1->unk_02 = 8;
 
             if (v6 != 2) {
-                const u8 *v9 = Unk_ov8_0224C6F8[v6];
-                int v10 = MTRNG_Next() % v8->unk_08;
+                int v9_rawX = (v6 == 0) ? 3 : 0;
+                int v9_rawZ = (v6 == 0) ? 2 : 0;
 
-                v1->unk_02 = v10 + v8->unk_04;
+                v1->unk_02 = v8->unk_04;
+                v1->unk_04 = v9_rawX + v8->unk_0C;
+                v1->unk_06 = v9_rawZ + v8->unk_10;
 
-                do {
-                    do {
-                        v1->unk_04 = MTRNG_Next() % v8->unk_14;
-                        v1->unk_06 = MTRNG_Next() % v8->unk_18;
-                    } while (v9[(v1->unk_06 * v8->unk_14) + v1->unk_04] == 1);
-
-                    v1->unk_04 += v8->unk_0C;
-                    v1->unk_06 += v8->unk_10;
-                } while (sub_0206326C(fieldSystem->mapObjMan, v1->unk_04, v1->unk_06, 0) != NULL);
-
+                GF_ASSERT(Unk_ov8_0224C6F8[v6][v9_rawZ * v8->unk_14 + v9_rawX] == 0);
                 GF_ASSERT(v1->unk_02 < (v8->unk_04 + v8->unk_08));
                 GF_ASSERT(v1->unk_04 < (v8->unk_0C + v8->unk_14));
                 GF_ASSERT(v1->unk_06 < (v8->unk_10 + v8->unk_18));
