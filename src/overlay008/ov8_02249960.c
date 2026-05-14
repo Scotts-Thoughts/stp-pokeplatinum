@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "constants/field/map_prop.h"
+#include "generated/map_headers.h"
 
 #include "struct_decls/struct_02027860_decl.h"
 #include "struct_decls/struct_0205E884_decl.h"
@@ -3885,6 +3886,16 @@ BOOL ov8_0224C51C(FieldSystem *fieldSystem)
 
     if (sub_02027F80(v4) != 2) {
         return 0;
+    }
+
+    // STP: Hearthome gym trainers should only battle when talked to. Their flashlights
+    // still illuminate, but the player's flashlight does not provoke an engagement.
+    {
+        int mapId = fieldSystem->location->mapId;
+        if (mapId == MAP_HEADER_HEARTHOME_CITY_GYM_TRAINER_ROOM_1
+            || mapId == MAP_HEADER_HEARTHOME_CITY_GYM_TRAINER_ROOM_2) {
+            return 0;
+        }
     }
 
     v0 = 0;

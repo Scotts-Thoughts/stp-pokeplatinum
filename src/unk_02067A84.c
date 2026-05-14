@@ -7,6 +7,8 @@
 #include "struct_decls/struct_02061830_decl.h"
 #include "struct_decls/struct_02061AB4_decl.h"
 
+#include "generated/map_headers.h"
+
 #include "field/field_system.h"
 #include "overlay005/ov5_021ECC20.h"
 #include "overlay005/ov5_021F5A10.h"
@@ -117,6 +119,15 @@ static int sub_02067BA8(FieldSystem *fieldSystem, MapObjectManager *param1, Play
 {
     int v0, v1, v2;
     MapObject *v3;
+
+    // STP: Hearthome gym trainers should only battle when talked to, not on sight.
+    {
+        int mapId = fieldSystem->location->mapId;
+        if (mapId == MAP_HEADER_HEARTHOME_CITY_GYM_TRAINER_ROOM_1
+            || mapId == MAP_HEADER_HEARTHOME_CITY_GYM_TRAINER_ROOM_2) {
+            return 0;
+        }
+    }
 
     v0 = 0;
     v3 = NULL;
