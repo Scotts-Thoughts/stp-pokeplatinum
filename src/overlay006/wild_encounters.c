@@ -12,7 +12,10 @@
 #include "generated/gender_ratios.h"
 #include "generated/genders.h"
 #include "generated/items.h"
+#include "generated/map_headers.h"
 #include "generated/species_data_params.h"
+
+#include "constants/savedata/vars_flags.h"
 
 #include "struct_defs/special_encounter.h"
 
@@ -98,7 +101,8 @@ static BOOL TryGenerateGrassEncounter_WithRadar(FieldSystem *fieldSystem, Pokemo
 static BOOL TryGenerateGrassEncounter_DoubleBattle(FieldSystem *fieldSystem, Pokemon *firstMon, FieldBattleDTO *battleParams, EncounterSlot *encounterTable, const WildEncounters_FieldParams *fieldParams);
 static BOOL TryGenerateSurfEncounter(FieldSystem *fieldSystem, Pokemon *param1, FieldBattleDTO *param2, EncounterSlot *param3, const WildEncounters_FieldParams *param4);
 static BOOL TryGenerateFishingEncounter(FieldSystem *fieldSystem, Pokemon *param1, FieldBattleDTO *param2, EncounterSlot *param3, const WildEncounters_FieldParams *param4, const int param5);
-static BOOL TryGenerateWildMon(Pokemon *firstPartyMon, const int fishingRodType, const WildEncounters_FieldParams *fieldParams, const EncounterSlot *encounterTable, const u8 encounterType, const int param5, FieldBattleDTO *param6);
+static BOOL TryGenerateWildMon(FieldSystem *fieldSystem, Pokemon *firstPartyMon, const int fishingRodType, const WildEncounters_FieldParams *fieldParams, const EncounterSlot *encounterTable, const u8 encounterType, const int param5, FieldBattleDTO *param6);
+static u16 ForcedEncounterSpecies(FieldSystem *fieldSystem, u16 defaultSpecies);
 static BOOL CreateWildMon_FromRadarNoChain(FieldSystem *fieldSystem, Pokemon *param1, const WildEncounters_FieldParams *param2, const EncounterSlot *param3, const int param4, FieldBattleDTO *param5, const int param6, const int param7);
 static BOOL CreateWildMon_FromRadarKeepChain(const int species, const int level, const int partyDest, const BOOL isShiny, const u32 trainerId, const WildEncounters_FieldParams *fieldParams, Pokemon *mon, FieldBattleDTO *battleParams);
 static u8 ModifyEncounterRateWithFieldParams(const BOOL isFishingEncounter, const u8 encounterRate, const WildEncounters_FieldParams *fieldParams, const u32 weatherEffect, Pokemon *unused);
@@ -717,7 +721,7 @@ static BOOL TryGenerateGrassEncounter_WithRadar(FieldSystem *fieldSystem, Pokemo
             }
         }
     } else {
-        encounterSuccess = TryGenerateWildMon(firstPartyMon, 0xff, encounterFieldParams, encounterTable, ENCOUNTER_TYPE_GRASS, 1, battleParams);
+        encounterSuccess = TryGenerateWildMon(fieldSystem, firstPartyMon, 0xff, encounterFieldParams, encounterTable, ENCOUNTER_TYPE_GRASS, 1, battleParams);
 
         if (encounterSuccess) {
             RadarChain_Clear(fieldSystem->chain);
@@ -729,22 +733,22 @@ static BOOL TryGenerateGrassEncounter_WithRadar(FieldSystem *fieldSystem, Pokemo
 
 static BOOL TryGenerateGrassEncounter_DoubleBattle(FieldSystem *fieldSystem, Pokemon *firstPartyMon, FieldBattleDTO *battleParams, EncounterSlot *encounterTable, const WildEncounters_FieldParams *fieldParams)
 {
-    if (!TryGenerateWildMon(firstPartyMon, 0xff, fieldParams, encounterTable, ENCOUNTER_TYPE_GRASS, 1, battleParams)) {
+    if (!TryGenerateWildMon(fieldSystem, firstPartyMon, 0xff, fieldParams, encounterTable, ENCOUNTER_TYPE_GRASS, 1, battleParams)) {
         return FALSE;
     }
 
-    BOOL encounterSuccess = TryGenerateWildMon(firstPartyMon, 0xff, fieldParams, encounterTable, ENCOUNTER_TYPE_GRASS, 3, battleParams);
+    BOOL encounterSuccess = TryGenerateWildMon(fieldSystem, firstPartyMon, 0xff, fieldParams, encounterTable, ENCOUNTER_TYPE_GRASS, 3, battleParams);
     return encounterSuccess;
 }
 
 static BOOL TryGenerateSurfEncounter(FieldSystem *fieldSystem, Pokemon *param1, FieldBattleDTO *param2, EncounterSlot *param3, const WildEncounters_FieldParams *param4)
 {
-    return TryGenerateWildMon(param1, 0xff, param4, param3, ENCOUNTER_TYPE_SURF, 1, param2);
+    return TryGenerateWildMon(fieldSystem, param1, 0xff, param4, param3, ENCOUNTER_TYPE_SURF, 1, param2);
 }
 
 static BOOL TryGenerateFishingEncounter(FieldSystem *fieldSystem, Pokemon *param1, FieldBattleDTO *param2, EncounterSlot *param3, const WildEncounters_FieldParams *param4, const int fishingRodType)
 {
-    return TryGenerateWildMon(param1, fishingRodType, param4, param3, ENCOUNTER_TYPE_FISHING, 1, param2);
+    return TryGenerateWildMon(fieldSystem, param1, fishingRodType, param4, param3, ENCOUNTER_TYPE_FISHING, 1, param2);
 }
 
 static BOOL ShouldGetRandomEncounter(FieldSystem *fieldSystem, const u32 encounterRate, const u8 tileBehavior)
@@ -1086,7 +1090,57 @@ static void CreateWildMon(u16 species, u8 level, const int partyDest, const Wild
     Heap_FreeToHeap(newEncounter);
 }
 
-static BOOL TryGenerateWildMon(Pokemon *firstPartyMon, const int fishingRodType, const WildEncounters_FieldParams *encounterFieldParams, const EncounterSlot *encounterTable, const u8 encounterType, const int partyDest, FieldBattleDTO *battleParams)
+// Force-encounter table: each row maps a (map, flag) pair to the species the
+// flag forces into the player's wild grass encounters on that map. Entries are
+// matched in order — earlier rows win when multiple flags are set for the
+// same map. The flags are cleared automatically when the species is caught
+// (see Pokedex_Capture in src/pokedex.c).
+typedef struct ForcedEncounterEntry {
+    u16 mapId;
+    u16 flagId;
+    u16 species;
+} ForcedEncounterEntry;
+
+static const ForcedEncounterEntry sForcedEncounters[] = {
+    { MAP_HEADER_ROUTE_201,           FLAG_FORCE_ROUTE_201_BIDOOF,      SPECIES_BIDOOF  },
+    { MAP_HEADER_ROUTE_201,           FLAG_FORCE_ROUTE_201_STARLY,      SPECIES_STARLY  },
+    { MAP_HEADER_ROUTE_202,           FLAG_FORCE_ROUTE_202_BIDOOF,      SPECIES_BIDOOF  },
+    { MAP_HEADER_ROUTE_202,           FLAG_FORCE_ROUTE_202_STARLY,      SPECIES_STARLY  },
+    { MAP_HEADER_ROUTE_203,           FLAG_FORCE_ROUTE_203_ABRA,        SPECIES_ABRA    },
+    { MAP_HEADER_OREBURGH_GATE_1F,    FLAG_FORCE_OREBURGH_GATE_ZUBAT,   SPECIES_ZUBAT   },
+    { MAP_HEADER_OREBURGH_GATE_1F,    FLAG_FORCE_OREBURGH_GATE_GEODUDE, SPECIES_GEODUDE },
+    { MAP_HEADER_OREBURGH_GATE_1F,    FLAG_FORCE_OREBURGH_GATE_PSYDUCK, SPECIES_PSYDUCK },
+    { MAP_HEADER_OREBURGH_GATE_B1F,   FLAG_FORCE_OREBURGH_GATE_ZUBAT,   SPECIES_ZUBAT   },
+    { MAP_HEADER_OREBURGH_GATE_B1F,   FLAG_FORCE_OREBURGH_GATE_GEODUDE, SPECIES_GEODUDE },
+    { MAP_HEADER_OREBURGH_GATE_B1F,   FLAG_FORCE_OREBURGH_GATE_PSYDUCK, SPECIES_PSYDUCK },
+    { MAP_HEADER_ROUTE_207,           FLAG_FORCE_ROUTE_207_MACHOP,      SPECIES_MACHOP  },
+    { MAP_HEADER_ROUTE_207,           FLAG_FORCE_ROUTE_207_GEODUDE,     SPECIES_GEODUDE },
+    { MAP_HEADER_OREBURGH_MINE_B1F,   FLAG_FORCE_OREBURGH_MINE_GEODUDE, SPECIES_GEODUDE },
+    { MAP_HEADER_OREBURGH_MINE_B2F,   FLAG_FORCE_OREBURGH_MINE_GEODUDE, SPECIES_GEODUDE },
+    { MAP_HEADER_ROUTE_208,           FLAG_FORCE_ROUTE_208_BIBAREL,     SPECIES_BIBAREL },
+    { MAP_HEADER_ROUTE_213,           FLAG_FORCE_ROUTE_213_BUIZEL,      SPECIES_BUIZEL  },
+};
+
+static u16 ForcedEncounterSpecies(FieldSystem *fieldSystem, u16 defaultSpecies)
+{
+    u16 mapId = fieldSystem->location->mapId;
+    VarsFlags *varsFlags = SaveData_GetVarsFlags(fieldSystem->saveData);
+    int i;
+
+    for (i = 0; i < NELEMS(sForcedEncounters); i++) {
+        if (sForcedEncounters[i].mapId != mapId) {
+            continue;
+        }
+
+        if (VarsFlags_CheckFlag(varsFlags, sForcedEncounters[i].flagId)) {
+            return sForcedEncounters[i].species;
+        }
+    }
+
+    return defaultSpecies;
+}
+
+static BOOL TryGenerateWildMon(FieldSystem *fieldSystem, Pokemon *firstPartyMon, const int fishingRodType, const WildEncounters_FieldParams *encounterFieldParams, const EncounterSlot *encounterTable, const u8 encounterType, const int partyDest, FieldBattleDTO *battleParams)
 {
     BOOL forcedSlot;
     u8 encounterSlot = 0;
@@ -1141,7 +1195,13 @@ static BOOL TryGenerateWildMon(Pokemon *firstPartyMon, const int fishingRodType,
         return FALSE;
     }
 
-    CreateWildMon(encounterTable[encounterSlot].species, level, partyDest, encounterFieldParams, firstPartyMon, battleParams);
+    u16 species = encounterTable[encounterSlot].species;
+
+    if (encounterType == ENCOUNTER_TYPE_GRASS) {
+        species = ForcedEncounterSpecies(fieldSystem, species);
+    }
+
+    CreateWildMon(species, level, partyDest, encounterFieldParams, firstPartyMon, battleParams);
     return TRUE;
 }
 

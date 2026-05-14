@@ -3,6 +3,7 @@
 #include <nitro.h>
 #include <string.h>
 
+#include "constants/savedata/vars_flags.h"
 #include "constants/species.h"
 #include "generated/gender_ratios.h"
 
@@ -11,6 +12,43 @@
 #include "pokedex_language.h"
 #include "pokemon.h"
 #include "savedata.h"
+#include "vars_flags.h"
+
+static void ClearForcedEncounterFlagsForSpecies(u16 species)
+{
+    static const struct {
+        u16 species;
+        u16 flagId;
+    } sSpeciesForcedFlags[] = {
+        { SPECIES_BIDOOF,  FLAG_FORCE_ROUTE_201_BIDOOF      },
+        { SPECIES_STARLY,  FLAG_FORCE_ROUTE_201_STARLY      },
+        { SPECIES_BIDOOF,  FLAG_FORCE_ROUTE_202_BIDOOF      },
+        { SPECIES_STARLY,  FLAG_FORCE_ROUTE_202_STARLY      },
+        { SPECIES_ABRA,    FLAG_FORCE_ROUTE_203_ABRA        },
+        { SPECIES_ZUBAT,   FLAG_FORCE_OREBURGH_GATE_ZUBAT   },
+        { SPECIES_GEODUDE, FLAG_FORCE_OREBURGH_GATE_GEODUDE },
+        { SPECIES_PSYDUCK, FLAG_FORCE_OREBURGH_GATE_PSYDUCK },
+        { SPECIES_MACHOP,  FLAG_FORCE_ROUTE_207_MACHOP      },
+        { SPECIES_GEODUDE, FLAG_FORCE_ROUTE_207_GEODUDE     },
+        { SPECIES_GEODUDE, FLAG_FORCE_OREBURGH_MINE_GEODUDE },
+        { SPECIES_BIBAREL, FLAG_FORCE_ROUTE_208_BIBAREL     },
+        { SPECIES_BUIZEL,  FLAG_FORCE_ROUTE_213_BUIZEL      },
+    };
+
+    SaveData *saveData = SaveData_Ptr();
+    if (saveData == NULL) {
+        return;
+    }
+
+    VarsFlags *varsFlags = SaveData_GetVarsFlags(saveData);
+    int i;
+
+    for (i = 0; i < NELEMS(sSpeciesForcedFlags); i++) {
+        if (sSpeciesForcedFlags[i].species == species) {
+            VarsFlags_ClearFlag(varsFlags, sSpeciesForcedFlags[i].flagId);
+        }
+    }
+}
 
 static const u16 sExcludedMonsNational[] = {
     SPECIES_MEW,
@@ -1084,6 +1122,8 @@ void Pokedex_Capture(Pokedex *pokedexData, Pokemon *pokemon)
 
     Write_CaughtSpecies(pokedexData, species);
     Write_SeenSpecies(pokedexData, species);
+
+    ClearForcedEncounterFlagsForSpecies(species);
 }
 
 void Pokedex_ObtainNationalDex(Pokedex *pokedexData)
