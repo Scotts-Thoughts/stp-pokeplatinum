@@ -9,7 +9,7 @@
             "script": 3342,
             "initial_dir": 3,
             "data": [
-                2
+                0
             ],
             "movement_range_x": 2,
             "movement_range_z": 2,
@@ -25,7 +25,7 @@
             "script": 3279,
             "initial_dir": 3,
             "data": [
-                2
+                0
             ],
             "movement_range_x": 3,
             "movement_range_z": 0,
@@ -41,7 +41,7 @@
             "script": 3339,
             "initial_dir": 2,
             "data": [
-                2
+                0
             ],
             "movement_range_x": 3,
             "movement_range_z": 3,
@@ -57,7 +57,7 @@
             "script": 3283,
             "initial_dir": 1,
             "data": [
-                2
+                0
             ],
             "movement_range_x": 0,
             "movement_range_z": 3,
