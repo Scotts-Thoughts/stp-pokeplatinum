@@ -18,7 +18,15 @@
             "lookups."
         ],
         "global_pointer_var": { "symbol": "sApplication", "offset": "0x04" },
-        "save_data_pointer":  { "symbol": "sSaveDataPtr" }
+        "save_data_pointer":  { "symbol": "sSaveDataPtr" },
+        "_comment_stp_vars": [
+            "stpVars -- the StpVars struct in src/_stp.c that holds STP",
+            "runtime state (starter species/position, catch-rate flags,",
+            "forced-encounter flags, etc.). The mapper exposes this as",
+            "variables.stpVars; XML properties reference it via {stpVars}.",
+            "This address shifts per patch, so it must be exported per-version."
+        ],
+        "stp_vars":           { "symbol": "stpVars" }
     },
     "base_offsets": {
         "_comment": "Constants used by the mapper preprocessor relative to *base_ptr or *sSaveDataPtr. Bump per patch if the in-RAM layout shifts.",

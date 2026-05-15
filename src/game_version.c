@@ -4,5 +4,5 @@ const u8 gGameLanguage = GAME_LANGUAGE;
 const PatchVersion gPatchVersion = {
     POKEPLATINUM_PATCH_MAGIC,
     POKEPLATINUM_PATCH_VERSION,
-    { 0, 5 },
+    { 0, 0 },
 };
