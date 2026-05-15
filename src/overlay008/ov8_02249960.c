@@ -5,7 +5,6 @@
 
 #include "constants/field/map_prop.h"
 #include "generated/map_headers.h"
-#include "generated/trainers.h"
 
 #include "struct_decls/struct_02027860_decl.h"
 #include "struct_decls/struct_0205E884_decl.h"
@@ -3910,7 +3909,9 @@ BOOL ov8_0224C51C(FieldSystem *fieldSystem)
     while (sub_020625B0(mapObjMan, &v7, &v0, (1 << 0))) {
         if ((v7 != v8) && (sub_02067F88(fieldSystem, v7) == 1)) {
             // STP: this grunt rotates too fast to skip past; require the player to talk to him.
-            if (Script_GetTrainerID(MapObject_GetScript(v7)) == TRAINER_GALACTIC_GRUNT_MT_CORONET_3F_1) {
+            // 515 = TRAINER_GALACTIC_GRUNT_MT_CORONET_3F_1 (can't include generated/trainers.h
+            // here: its `enum Trainer` collides with `struct Trainer` from struct_defs/trainer.h).
+            if (Script_GetTrainerID(MapObject_GetScript(v7)) == 515) {
                 continue;
             }
             v3 = sub_02067D58(v7, playerAvatar, v1, v2);
