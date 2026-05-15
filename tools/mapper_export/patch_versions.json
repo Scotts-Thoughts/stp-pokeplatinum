@@ -1,11 +1,11 @@
 {
   "patch_magic": "0x504C5450",
   "by_version": {
-    "-1": {
-      "anchor_addr": null,
+    "1": {
+      "anchor_addr": "0x020E4FFC",
       "lookups": {
-        "global_pointer_var": "0x02101D2C",
-        "save_data_pointer": "0x021C0794"
+        "global_pointer_var": "0x0210212C",
+        "save_data_pointer": "0x021C0B94"
       },
       "base_offsets": {
         "player_party": 53396,
@@ -16,11 +16,11 @@
         "address_offset": 36
       }
     },
-    "1": {
-      "anchor_addr": "0x020E4FFC",
+    "-1": {
+      "anchor_addr": null,
       "lookups": {
-        "global_pointer_var": "0x0210212C",
-        "save_data_pointer": "0x021C0B94"
+        "global_pointer_var": "0x0210200C",
+        "save_data_pointer": "0x021C0A74"
       },
       "base_offsets": {
         "player_party": 53396,
