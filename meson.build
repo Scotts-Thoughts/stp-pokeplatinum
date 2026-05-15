@@ -77,6 +77,7 @@ link_args = [
     '-msgstyle' ,'gcc',
     '-m', '_start',
     '-force_active', 'DGTi_hash2_arm4_small',
+    '-force_active', 'gPatchVersion',
     '-sym', 'on'
 ]
 

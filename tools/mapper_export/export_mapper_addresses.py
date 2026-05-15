@@ -176,7 +176,8 @@ def main() -> int:
         "--xmap",
         type=Path,
         default=None,
-        help="Path to main.nef.xMAP (default: <repo>/main.nef.xMAP).",
+        help="Path to main.nef.xMAP (default: <repo>/build/main.nef.xMAP, "
+             "falling back to <repo>/main.nef.xMAP).",
     )
     parser.add_argument(
         "--pokeabyte-dir",
@@ -210,7 +211,12 @@ def main() -> int:
     args = parser.parse_args()
 
     repo = args.repo_root
-    xmap = args.xmap or (repo / "main.nef.xMAP")
+    if args.xmap is not None:
+        xmap = args.xmap
+    else:
+        build_xmap = repo / "build" / "main.nef.xMAP"
+        repo_xmap = repo / "main.nef.xMAP"
+        xmap = build_xmap if build_xmap.exists() else repo_xmap
     pm_version_h = repo / "include" / "global" / "pm_version.h"
     symbols_json = repo / "tools" / "mapper_export" / "symbols.json"
     local_versions = repo / "tools" / "mapper_export" / PATCH_VERSIONS_NAME
