@@ -22,7 +22,20 @@
 #define SPANISH  7
 #define KOREAN   8
 
+// Bump this whenever you release a new patch that may shift RAM symbol
+// addresses. The PokeAByte mapper reads gPatchVersion at runtime to pick
+// the correct per-build address table from patch_versions.json.
+#define POKEPLATINUM_PATCH_VERSION 1
+#define POKEPLATINUM_PATCH_MAGIC   0x504C5450 /* "PLTP" */
+
+typedef struct PatchVersion {
+    u32 magic;
+    u32 version;
+    u32 reserved[2];
+} PatchVersion;
+
 extern const u8 gGameVersion;
 extern const u8 gGameLanguage;
+extern const PatchVersion gPatchVersion;
 
 #endif // POKEPLATINUM_PM_VERSION_H

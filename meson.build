@@ -270,6 +270,26 @@ ovly_mapper = custom_target('overlay.map',
 
 
 ############################################################
+###             POKEABYTE MAPPER ADDRESS EXPORT          ###
+############################################################
+# Parses the linker xMAP produced alongside `main` and writes per-patch
+# address tables into the PokeAByte ST/gen4 platinum_ne mapper.
+# Override the destination by exporting POKEABYTE_MAPPER_DIR before building.
+mapper_export = custom_target('mapper_export',
+    output: 'mapper_export.stamp',
+    input: main,
+    command: [
+        export_mapper_addresses_py,
+        '--repo-root', meson.project_source_root(),
+        '--xmap', '@OUTDIR@/main.nef.xMAP',
+        '--stamp', '@OUTPUT@',
+    ],
+    build_by_default: true,
+    console: true
+)
+
+
+############################################################
 ###                        TESTS                         ###
 ############################################################
 # sha1sum = find_program(['sha1sum', 'shasum'], native: true)

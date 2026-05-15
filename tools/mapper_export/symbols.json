@@ -1,0 +1,32 @@
+{
+    "_comment": [
+        "Source-of-truth for the PokeAByte mapper address export.",
+        "Run by tools/mapper_export/export_mapper_addresses.py after every build.",
+        "Each entry under 'lookups' becomes a key in patch_versions.json's per-version address table.",
+        "An entry can be one of:",
+        "  { \"symbol\": \"foo\" }                — resolves to the address of the C symbol",
+        "  { \"symbol\": \"foo\", \"offset\": 16 }  — symbol address plus a fixed offset",
+        "  { \"address\": \"0x210200C\" }         — raw absolute address (escape hatch; defeats auto-tracking)",
+        "Offsets may be int or hex string (e.g. \"0x214\")."
+    ],
+    "anchor_symbol": "gPatchVersion",
+    "lookups": {
+        "_comment_global_pointer_var": [
+            "sApplication.currOverlay -- the OverlayManager* field at offset 4 of",
+            "the static Application struct in src/main.c. The mapper dereferences",
+            "this to obtain the heap-allocated 'base_ptr' used for all party/battle",
+            "lookups."
+        ],
+        "global_pointer_var": { "symbol": "sApplication", "offset": "0x04" },
+        "save_data_pointer":  { "symbol": "sSaveDataPtr" }
+    },
+    "base_offsets": {
+        "_comment": "Constants used by the mapper preprocessor relative to *base_ptr or *sSaveDataPtr. Bump per patch if the in-RAM layout shifts.",
+        "player_party":          "0xD094",
+        "dynamic_player_base":   "0x5888C",
+        "dynamic_party_stride":  "0x5B0",
+        "current_party_indexes": "0x54984",
+        "saves_pointer_offset":  "0x20018",
+        "address_offset":        "0x24"
+    }
+}

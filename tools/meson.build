@@ -8,6 +8,7 @@ subdir('ordergen')
 subdir('postconf')
 subdir('scripts')
 subdir('debug')
+subdir('mapper_export')
 
 # Prebuilt tools
 mwrap_exe = find_program('cw/mwrap', native: true)
