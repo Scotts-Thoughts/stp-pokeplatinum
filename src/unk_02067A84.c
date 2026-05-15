@@ -8,6 +8,7 @@
 #include "struct_decls/struct_02061AB4_decl.h"
 
 #include "generated/map_headers.h"
+#include "generated/trainers.h"
 
 #include "field/field_system.h"
 #include "overlay005/ov5_021ECC20.h"
@@ -135,6 +136,10 @@ static int sub_02067BA8(FieldSystem *fieldSystem, MapObjectManager *param1, Play
 
     while (sub_020625B0(param1, &v3, &v0, (1 << 0))) {
         if ((param3 == NULL) || (param3 != v3)) {
+            // STP: this grunt rotates too fast to skip past; require the player to talk to him.
+            if (Script_GetTrainerID(MapObject_GetScript(v3)) == TRAINER_GALACTIC_GRUNT_MT_CORONET_3F_1) {
+                continue;
+            }
             v1 = sub_02067C80(v3, playerAvatar, &v2);
 
             if (v1 != -1) {
