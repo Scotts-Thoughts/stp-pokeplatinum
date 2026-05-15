@@ -563,7 +563,7 @@ static u16 ov5_021F0E58(int param0)
 }
 
 static const int Unk_ov5_021FFA00[] = {
-    0x2D,
-    0x1E,
-    0xF
+    0xB4,
+    0x78,
+    0x3C
 };
