@@ -48,8 +48,6 @@ _009F:
     ScrCmd_042 174, 0
     ScrCmd_042 175, 1
     ScrCmd_043
-    GetRandom 0x800C, 2
-    GoToIfEq 0x800C, 0, _00E4
     Message 4
     SetVar 0x8004, 0x1BC
     SetVar 0x8005, 1
