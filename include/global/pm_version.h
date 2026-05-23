@@ -25,7 +25,7 @@
 // Bump this whenever you release a new patch that may shift RAM symbol
 // addresses. The PokeAByte mapper reads gPatchVersion at runtime to pick
 // the correct per-build address table from patch_versions.json.
-#define POKEPLATINUM_PATCH_VERSION 5
+#define POKEPLATINUM_PATCH_VERSION 6
 #define POKEPLATINUM_PATCH_MAGIC   0x504C5450 /* "PLTP" */
 
 typedef struct PatchVersion {
